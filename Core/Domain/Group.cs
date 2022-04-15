@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Core.Domain
 {
@@ -16,6 +17,11 @@ namespace Core.Domain
         {
             Title = title; // TODO: Add null or empty check.
             _students = students.ToList();
+        }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
         }
     }
 }
