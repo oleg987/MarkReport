@@ -19,7 +19,7 @@ namespace Core.Parsers
 
         public IEnumerable<Group> Parse()
         {
-            using var package = new ExcelPackage(_pathToDataFile);
+            using var package = new ExcelPackage(_pathToDataFile); // TODO: Add null or empty check.
 
             var workbook = package.Workbook;
             var worksheet = workbook.Worksheets["students"];

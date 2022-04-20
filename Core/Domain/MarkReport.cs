@@ -12,6 +12,7 @@ namespace Core.Domain
 
         public string UniversityName { get; } = null!;
         public string InstituteName { get; } = null!;
+        public string StudyProgramName { get; } = null!;
         public string Speciality { get; } = null!;
         public string Department { get; } = null!;
         public uint Year { get; }
@@ -22,11 +23,12 @@ namespace Core.Domain
         public Subject Subject { get; } = null!;
         public IReadOnlyList<Student> Students { get => _students.OrderBy(s => s.FullName).ToList().AsReadOnly(); }
 
-        public MarkReport(List<Student> students, string universityName, string instituteName, string speciality, string department, uint year, uint semester, uint course, string group, uint markReportYear, Subject subject)
+        public MarkReport(IEnumerable<Student> students, string universityName, string instituteName, string studyProgramName, string speciality, string department, uint year, uint semester, uint course, string group, uint markReportYear, Subject subject)
         {
-            _students = students;
+            _students = students.ToList();
             UniversityName = universityName; // TODO: Add null or empty check.
             InstituteName = instituteName;
+            StudyProgramName = studyProgramName;
             Speciality = speciality;
             Department = department;
             Year = year;

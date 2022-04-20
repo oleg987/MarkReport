@@ -1,14 +1,19 @@
 ﻿
 using Core.Parsers;
+using Core.Workers;
 using OfficeOpenXml;
 
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-var parser = new GroupParserFromExcel("data.xlsx");
+var parser = new StudyProgramParserFromExcel("data.xlsx");
 
-var groups = parser.Parse();
+var studyPrograms = parser.Parse();
 
-foreach (var group in groups)
+foreach (var studyProgram in studyPrograms)
 {
-    Console.WriteLine(group);
+    Console.WriteLine(studyProgram);
 }
+
+var worker = new MarkReportWorker(studyPrograms);
+
+worker.CreateMarkReports();

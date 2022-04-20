@@ -15,7 +15,7 @@ namespace Core.Domain
 
         public Group(string title, IEnumerable<Student> students)
         {
-            Title = title; // TODO: Add null or empty check.
+            Title = title.Trim(); // TODO: Add null or empty check.
             _students = students.ToList();
         }
 
