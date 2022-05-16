@@ -1,4 +1,5 @@
 ﻿using Core.Domain;
+using Core.Events;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -12,14 +13,16 @@ namespace Core.Parsers
     {
         private readonly string _pathToDataFile;
 
+        public event EventHandler<OnErrorEventArgs> OnError;
+
         public StudyProgramParserFromExcel(string pathToDataFile)
         {
-            _pathToDataFile = pathToDataFile; // TODO: Add null or empty check.
+            _pathToDataFile = !string.IsNullOrWhiteSpace(pathToDataFile) ? pathToDataFile : throw new ArgumentException("Path to data file is empty!");
         }
 
         public IEnumerable<StudyProgram> Parse()
         {
-            using var package = new ExcelPackage(_pathToDataFile); // TODO: Add null or empty check.
+            using var package = new ExcelPackage(_pathToDataFile);
 
             var workbook = package.Workbook;
             var studyProgramWorksheet = workbook.Worksheets["study_program"];
@@ -31,9 +34,17 @@ namespace Core.Parsers
 
             while (groupWorksheet.Cells["A" + groupDataBeginRow].Value is not null && groupWorksheet.Cells["B" + groupDataBeginRow].Value is not null)
             {
-                students.Add(new Student(groupWorksheet.Cells["B" + groupDataBeginRow].Value.ToString(), groupWorksheet.Cells["A" + groupDataBeginRow].Value.ToString()));
+                try
+                {
+                    students.Add(new Student(groupWorksheet.Cells["B" + groupDataBeginRow].Value.ToString(), groupWorksheet.Cells["A" + groupDataBeginRow].Value.ToString()));
+                }
+                catch (Exception e)
+                {
+                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message}; List: \"students\"; Row: {groupDataBeginRow};"));
+                }
+                
                 groupDataBeginRow++;
-            }
+            }            
 
             var uniqueGroupNames = students.Select(s => s.Group).Distinct();
 
@@ -67,20 +78,34 @@ namespace Core.Parsers
 
                 var subjects = new List<Subject>();
 
-                while (studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn].Value is not null)
+                while (studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn].Value is not null || studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn + 1].Value is not null)
                 {
-                    var subjectTitle = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn].Value.ToString();
-                    var subjectControl = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn + 1].Value.ToString();
-                    var subject = new Subject(subjectTitle, subjectControl);
-                    subjects.Add(subject);
+                    try
+                    {
+                        var subjectTitle = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn].Value.ToString();
+                        var subjectControl = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn + 1].Value.ToString();
+                        var subject = new Subject(subjectTitle, subjectControl);
+                        subjects.Add(subject);
+                    }
+                    catch (Exception e)
+                    {
+                        OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message}; List: \"study_program\"; Row: {studyProgramDataBeginRow};"));
+                    }                    
 
                     currentSubjectColumn += 2;
                 }
 
                 var studyProgramGroups = groups.Where(g => groupNames.Contains(g.Title));
 
-                var studyProgram = new StudyProgram(studyProgramGroups, subjects, studyProgramName, speciality, department, year, semester, course);
-                studyPrograms.Add(studyProgram);
+                try
+                {
+                    var studyProgram = new StudyProgram(studyProgramGroups, subjects, studyProgramName, speciality, department, year, semester, course);
+                    studyPrograms.Add(studyProgram);
+                }
+                catch (Exception e)
+                {
+                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message}; List: \"study_program\"; Row: {studyProgramDataBeginRow};"));
+                }                
 
                 studyProgramDataBeginRow++;
             }

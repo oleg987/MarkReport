@@ -21,20 +21,20 @@ namespace Core.Domain
         public string Group { get; } = null!;
         public uint MarkReportYear { get; } = (uint)DateTime.Now.Year;
         public Subject Subject { get; } = null!;
-        public IReadOnlyList<Student> Students { get => _students.OrderBy(s => s.FullName).ToList().AsReadOnly(); }
+        public IReadOnlyList<Student> Students { get => _students.AsReadOnly(); }
 
         public MarkReport(IEnumerable<Student> students, string universityName, string instituteName, string studyProgramName, string speciality, string department, uint year, uint semester, uint course, string group, uint markReportYear, Subject subject)
         {
             _students = students.ToList();
-            UniversityName = universityName; // TODO: Add null or empty check.
-            InstituteName = instituteName;
-            StudyProgramName = studyProgramName;
-            Speciality = speciality;
-            Department = department;
+            UniversityName = !string.IsNullOrWhiteSpace(universityName) ? universityName.Trim() : throw new ArgumentException("University title is empty!");
+            InstituteName = !string.IsNullOrWhiteSpace(instituteName) ? instituteName.Trim() : throw new ArgumentException("Institute title is empty!");
+            StudyProgramName = !string.IsNullOrWhiteSpace(studyProgramName) ? studyProgramName.Trim() : throw new ArgumentException("Study Program title is empty!");
+            Speciality = !string.IsNullOrWhiteSpace(speciality) ? speciality.Trim() : throw new ArgumentException("Speciality title is empty!");
+            Department = !string.IsNullOrWhiteSpace(department) ? department.Trim() : throw new ArgumentException("Department title is empty!");
             Year = year;
             Semester = semester;
             Course = course;
-            Group = group;
+            Group = !string.IsNullOrWhiteSpace(group) ? group.Trim() : throw new ArgumentException("Group title is empty!");
             MarkReportYear = markReportYear;
             Subject = subject;
         }

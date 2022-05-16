@@ -25,9 +25,9 @@ namespace Core.Domain
         {
             _groups = groups.ToList();
             _subjects = subjects.ToList();
-            Title = title;
-            Speciality = speciality;
-            Department = department;
+            Title = !string.IsNullOrWhiteSpace(title) ? title.Trim() : throw new ArgumentException("Study Program title is empty!");
+            Speciality = !string.IsNullOrWhiteSpace(speciality) ? speciality.Trim() : throw new ArgumentException("Speciality is empty!");
+            Department = !string.IsNullOrWhiteSpace(department) ? department.Trim() : throw new ArgumentException("Department is empty!");
             Year = year;
             Semester = semester;
             Course = course;

@@ -13,8 +13,8 @@ namespace Core.Domain
 
         public Student(string fullName, string group)
         {
-            FullName = fullName; // TODO: Add null or empty check.
-            Group = group;
+            FullName = !string.IsNullOrWhiteSpace(fullName) ? fullName.Trim() : throw new ArgumentException("Student name is empty!");
+            Group = !string.IsNullOrWhiteSpace(group) ? group.Trim() : throw new ArgumentException("Group title is empty!");
         }
     }
 }

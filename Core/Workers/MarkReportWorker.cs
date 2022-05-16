@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using OfficeOpenXml;
+using Core.Events;
 
 namespace Core.Workers
 {
@@ -17,16 +18,50 @@ namespace Core.Workers
         private readonly string _instituteName = "ІНСТИТУТ КОМП'ЮТЕРНИХ СИСТЕМ";
         private readonly string _reportDestinationPath;
 
-        public MarkReportWorker(IEnumerable<StudyProgram> studyPrograms, string destinationPath)
+        public event EventHandler<OnErrorEventArgs> OnError;
+
+        public MarkReportWorker(IEnumerable<StudyProgram> studyPrograms, string destinationPath, string universityName, string instituteName)
         {
             _studyPrograms = studyPrograms;
             _reportDestinationPath = destinationPath;
+            _universityName = universityName;
+            _instituteName = instituteName;
         }
 
-        public void CreateMarkReports()
+        public async Task CreateMarkReportsAsync()
         {
-            // TODO: Сформировать объекты MarkReport.
+            // Сформировать объекты MarkReport.
+            var markReports = GetMarkReports();
+
+            if (markReports.Count == 0)
+            {
+                OnError?.Invoke(this, new OnErrorEventArgs($"Error: No study programs recieved;"));
+                return;
+            }
+
+            // Создать файлы Excel с ведомостями.
+
+            Assembly asm = Assembly.GetExecutingAssembly();
+
+            using var templateStream = asm.GetManifestResourceStream("Core.template.xlsx");
+
+            using var template = new ExcelPackage(templateStream);
+
+            foreach (var markReport in markReports)
+            {
+                await SaveMarkReport(template, markReport);
+            }
+        }
+
+        // Create Mark Reports from Study Programs.
+        private List<MarkReport> GetMarkReports()
+        {
             var markReports = new List<MarkReport>();
+
+            if (_studyPrograms is null || !_studyPrograms.Any())
+            {                
+                return markReports;
+            }
 
             foreach (var studyProgram in _studyPrograms)
             {
@@ -34,86 +69,144 @@ namespace Core.Workers
                 {
                     foreach (var subject in studyProgram.Subjects)
                     {
-                        var markReport = new MarkReport(
-                            group.Students, 
-                            _universityName, 
-                            _instituteName, 
+                        try
+                        {
+                            var markReport = new MarkReport(
+                            group.Students,
+                            _universityName,
+                            _instituteName,
                             studyProgram.Title,
-                            studyProgram.Speciality, 
-                            studyProgram.Department, 
-                            studyProgram.Year, 
-                            studyProgram.Semester, 
-                            studyProgram.Course, 
-                            group.Title, 
-                            (uint)DateTime.Now.Year, 
+                            studyProgram.Speciality,
+                            studyProgram.Department,
+                            studyProgram.Year,
+                            studyProgram.Semester,
+                            studyProgram.Course,
+                            group.Title,
+                            (uint)DateTime.Now.Year,
                             subject);
 
-                        markReports.Add(markReport);
+                            markReports.Add(markReport);
+                        }
+                        catch (Exception e)
+                        {
+                            OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                        }
                     }
-                }                
-            }
-
-            // TODO: Создать папки для групп.
-            DirectoryInfo rootDirectory = new DirectoryInfo(_reportDestinationPath);
-
-            if (!rootDirectory.Exists)
-            {
-                rootDirectory.Create();
-            }
-
-            // Get all unique group titles.
-
-            var uniqueGroupTitles = _studyPrograms.SelectMany(sp => sp.Groups).Select(g => g.Title).Distinct();
-
-            // Create directories for each group.
-
-            var subDirectories = rootDirectory.GetDirectories();
-
-            foreach (var groupTitle in uniqueGroupTitles)
-            {
-                if (!subDirectories.Any(sd => sd.Name == groupTitle))
-                {
-                    rootDirectory.CreateSubdirectory(groupTitle);
                 }
             }
 
-            // TODO: Создать файлы Excel с ведомостями.
+            return markReports;
+        }
 
-            Assembly asm = Assembly.GetExecutingAssembly();
+        private async Task SaveMarkReport(ExcelPackage template, MarkReport markReport)
+        {
+            var filePath = GetMarkReportPath(markReport);
 
-            using var templateStream = asm.GetManifestResourceStream("Core.template.xlsx");
-
-            foreach (var markReport in markReports)
+            if (filePath is null)
             {
-                using var template = new ExcelPackage(templateStream);
+                return;
+            }
 
-                var path = $@"{_reportDestinationPath}/{markReport.Group}/{markReport.Subject.Title}_{markReport.Subject.ControlType}_{markReport.Year}.xlsx";
+            var file = new FileInfo(filePath);
 
-                using var reportFile = new ExcelPackage(path);
-
-                var worksheet = reportFile.Workbook.Worksheets.Add($"{markReport.Group}", template.Workbook.Worksheets[0]);
-
-                worksheet.Cells["A2"].Value = markReport.UniversityName;
-                worksheet.Cells["A3"].Value = markReport.InstituteName;
-                worksheet.Cells["C4"].Value = markReport.Speciality;
-                worksheet.Cells["C5"].Value = markReport.StudyProgramName;
-                worksheet.Cells["C6"].Value = markReport.Year;
-                worksheet.Cells["H5"].Value = markReport.Semester;
-                worksheet.Cells["H6"].Value = markReport.Course;
-                worksheet.Cells["H7"].Value = markReport.Group;
-                worksheet.Cells["F10"].Value = $"{markReport.MarkReportYear} року";
-                worksheet.Cells["C11"].Value = markReport.Subject.Title;
-                worksheet.Cells["E12"].Value = markReport.Subject.ControlType;
-
-                int studentsDataBeginRow = 18;
-
-                foreach (var student in markReport.Students)
+            // If file already exists delete it.
+            if (file.Exists)
+            {
+                try
                 {
-                    worksheet.Cells["B" + studentsDataBeginRow].Value = student.FullName;
-                    studentsDataBeginRow++;
+                    file.Delete();
+                    file = new FileInfo(filePath);
                 }
+                catch (Exception e)
+                {
+                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    return;
+                }
+            }
 
-                reportFile.Save();
+            using var reportFile = new ExcelPackage(file);
+
+            FillMarkReport(template, reportFile, markReport);
+
+            await reportFile.SaveAsync();
+        }
+
+        private string? GetMarkReportPath(MarkReport markReport)
+        {
+            var groupName = markReport.Group.Split('-')[0];
+
+            var dir = new DirectoryInfo($@"{_reportDestinationPath}/{groupName}");
+
+            if (!dir.Exists)
+            {
+                try
+                {
+                    dir.Create();
+                }
+                catch (Exception e)
+                {
+                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    return null;
+                }
+            }
+
+            var courseSubDir = new DirectoryInfo($@"{_reportDestinationPath}/{groupName}/{markReport.Course} курс");
+
+            if (!courseSubDir.Exists)
+            {
+                try
+                {
+                    courseSubDir.Create();
+                }
+                catch (Exception e)
+                {
+                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    return null;
+                }
+            }
+
+            var groupSubDir = new DirectoryInfo($@"{_reportDestinationPath}/{groupName}/{markReport.Course} курс/{markReport.Group}");
+
+            if (!groupSubDir.Exists)
+            {
+                try
+                {
+                    groupSubDir.Create();
+                }
+                catch (Exception e)
+                {
+                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    return null;
+                }
+            }
+
+            var filePath = $@"{_reportDestinationPath}/{groupName}/{markReport.Course} курс/{markReport.Group}/{markReport.Group}_{markReport.Subject.Title}_{markReport.Subject.ControlType}.xlsx";
+
+            return filePath;
+        }
+
+        private void FillMarkReport(ExcelPackage template, ExcelPackage reportFile, MarkReport markReport)
+        {
+            var worksheet = reportFile.Workbook.Worksheets.Add($"{markReport.Group}", template.Workbook.Worksheets[0]);
+
+            worksheet.Cells["A2"].Value = markReport.UniversityName;
+            worksheet.Cells["A3"].Value = markReport.InstituteName;
+            worksheet.Cells["C4"].Value = markReport.Speciality;
+            worksheet.Cells["C5"].Value = markReport.StudyProgramName;
+            worksheet.Cells["C6"].Value = markReport.Year;
+            worksheet.Cells["H5"].Value = markReport.Semester;
+            worksheet.Cells["H6"].Value = markReport.Course;
+            worksheet.Cells["H7"].Value = markReport.Group;
+            worksheet.Cells["F10"].Value = $"{markReport.MarkReportYear} року";
+            worksheet.Cells["C11"].Value = markReport.Subject.Title;
+            worksheet.Cells["E12"].Value = markReport.Subject.ControlType;
+
+            int studentsDataBeginRow = 18;
+
+            foreach (var student in markReport.Students)
+            {
+                worksheet.Cells["B" + studentsDataBeginRow].Value = student.FullName;
+                studentsDataBeginRow++;
             }
         }
     }

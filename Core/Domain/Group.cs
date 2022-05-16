@@ -15,7 +15,7 @@ namespace Core.Domain
 
         public Group(string title, IEnumerable<Student> students)
         {
-            Title = title.Trim(); // TODO: Add null or empty check.
+            Title = !string.IsNullOrWhiteSpace(title) ? title.Trim() : throw new ArgumentException("Group title is empty!");
             _students = students.ToList();
         }
 
