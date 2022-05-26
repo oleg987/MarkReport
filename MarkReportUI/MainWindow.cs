@@ -1,7 +1,9 @@
 using Core.Domain;
 using Core.Events;
+using Core.Generator;
 using Core.Parsers;
 using Core.Workers;
+using System.Diagnostics;
 
 namespace MarkReportUI
 {
@@ -21,26 +23,6 @@ namespace MarkReportUI
             btnStart.Enabled = false;
             txtUniversity.Text = _universityName;
             txtInstitute.Text = _instituteName;
-        }
-
-        private void btnOutputDir_Click(object sender, EventArgs e)
-        {
-            if (fbdOutputDir.ShowDialog() == DialogResult.OK)
-            {
-                _outputDir = fbdOutputDir.SelectedPath;
-                _outputDirSet = true;
-            }
-            CanStart();
-        }
-
-        private void btnDataSource_Click(object sender, EventArgs e)
-        {
-            if (ofdDataSource.ShowDialog() == DialogResult.OK)
-            {
-                _dataSourcePath = ofdDataSource.FileName;
-                _dataSourcePathSet = true;
-            }
-            CanStart();
         }
 
         private async void btnStart_Click(object sender, EventArgs e)
@@ -70,7 +52,8 @@ namespace MarkReportUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Unknown error: {ex.Message}");                
+                txtOutput.Items.Add(ex.Message);
+                return;
             }
             finally
             {
@@ -82,12 +65,11 @@ namespace MarkReportUI
 
             if (studyPrograms is null)
             {
+                txtOutput.Items.Add("No study programs.");
                 return;
             }
 
-            MarkReportWorker worker = null;
-
-            bool isSuccess = true;
+            MarkReportWorker worker = null;            
 
             try
             {
@@ -99,7 +81,8 @@ namespace MarkReportUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Unknown error: {ex.Message}");
+                txtOutput.Items.Add(ex.Message);
+                return;
             }
             finally
             {
@@ -107,12 +90,76 @@ namespace MarkReportUI
                 {
                     worker.OnError -= PrintError;
                 }
-            }            
+            }
+
+            txtOutput.Items.Add("Success!");
+
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = _outputDir,
+                UseShellExecute = true,
+                Verb = "open"
+            };
+            Process.Start(processInfo);
         }
 
-        private void PrintError(object? sender, OnErrorEventArgs e)
+        private void btnOpenBase_Click(object sender, EventArgs e)
         {
-            txtOutput.Text += e.Message + "\r\n";
+            if (ofdDataSource.ShowDialog() == DialogResult.OK)
+            {
+                _dataSourcePath = ofdDataSource.FileName;
+                _dataSourcePathSet = true;
+            }
+            CanStart();
+        }
+
+        private void btnCreateBase_Click(object sender, EventArgs e)
+        {
+            GenerateDataFile();
+        }        
+
+        private void ñòâîðèòè²íôîðìàö³éíóÁàçóToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateDataFile();
+        }
+
+        private void âèá³ðÏàïêèÄëÿÃåíåðàö³¿Â³äîìîñòåéToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectOutputDir();
+        }
+
+        private void btnSelectOutputDir_Click(object sender, EventArgs e)
+        {
+            SelectOutputDir();
+        }
+
+        private void GenerateDataFile()
+        {
+            if (fbdOutputDir.ShowDialog() == DialogResult.OK)
+            {
+                var generator = new DataFileGenerator(fbdOutputDir.SelectedPath);
+                var filePath = generator.Generate();
+                _dataSourcePath = filePath;
+                _dataSourcePathSet = true;
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                };
+                Process.Start(processInfo);
+                txtOutput.Items.Add($"Created data file in {filePath}");
+            }
+            CanStart();
+        }
+
+        private void SelectOutputDir()
+        {
+            if (fbdOutputDir.ShowDialog() == DialogResult.OK)
+            {
+                _outputDir = fbdOutputDir.SelectedPath;
+                _outputDirSet = true;
+            }
+            CanStart();
         }
 
         private void CanStart()
@@ -121,6 +168,21 @@ namespace MarkReportUI
             {
                 btnStart.Enabled = true;
             }
+        }
+
+        private void PrintError(object? sender, OnErrorEventArgs e)
+        {
+            txtOutput.Items.Add(e.Message);
+        }
+
+        private void ³íôîðìàö³ÿÏðîÊîðèñòóâàííÿÏðîãðàìîþToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ïðîÏðîãðàìóToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -39,18 +39,16 @@
             this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.створитиІнформаційнуБазуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.змінитиНазвуУніверситетуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.змінитиНазвуІнститутуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.вихідІзПрограмиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.інформаціяПроКористуванняПрограмоюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.проПрограмуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label3 = new System.Windows.Forms.Label();
             this.btnCreateBase = new System.Windows.Forms.Button();
             this.btnOpenBase = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnSelectOutputDir = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -70,6 +68,7 @@
             // txtOutput
             // 
             this.txtOutput.FormattingEnabled = true;
+            this.txtOutput.HorizontalScrollbar = true;
             this.txtOutput.ItemHeight = 15;
             this.txtOutput.Location = new System.Drawing.Point(158, 121);
             this.txtOutput.Name = "txtOutput";
@@ -124,12 +123,30 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.створитиІнформаційнуБазуToolStripMenuItem,
             this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem,
-            this.змінитиНазвуУніверситетуToolStripMenuItem,
-            this.змінитиНазвуІнститутуToolStripMenuItem,
             this.вихідІзПрограмиToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.fileToolStripMenuItem.Text = "Файл";
+            // 
+            // створитиІнформаційнуБазуToolStripMenuItem
+            // 
+            this.створитиІнформаційнуБазуToolStripMenuItem.Name = "створитиІнформаційнуБазуToolStripMenuItem";
+            this.створитиІнформаційнуБазуToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.створитиІнформаційнуБазуToolStripMenuItem.Text = "Створити інформаційну базу";
+            this.створитиІнформаційнуБазуToolStripMenuItem.Click += new System.EventHandler(this.створитиІнформаційнуБазуToolStripMenuItem_Click);
+            // 
+            // вибірПапкиДляГенераціїВідомостейToolStripMenuItem
+            // 
+            this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Name = "вибірПапкиДляГенераціїВідомостейToolStripMenuItem";
+            this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Text = "Вибір папки для генерації відомостей";
+            this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Click += new System.EventHandler(this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem_Click);
+            // 
+            // вихідІзПрограмиToolStripMenuItem
+            // 
+            this.вихідІзПрограмиToolStripMenuItem.Name = "вихідІзПрограмиToolStripMenuItem";
+            this.вихідІзПрограмиToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.вихідІзПрограмиToolStripMenuItem.Text = "Вихід із програми";
             // 
             // helpToolStripMenuItem
             // 
@@ -140,47 +157,19 @@
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.helpToolStripMenuItem.Text = "Довідка";
             // 
-            // створитиІнформаційнуБазуToolStripMenuItem
-            // 
-            this.створитиІнформаційнуБазуToolStripMenuItem.Name = "створитиІнформаційнуБазуToolStripMenuItem";
-            this.створитиІнформаційнуБазуToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
-            this.створитиІнформаційнуБазуToolStripMenuItem.Text = "Створити інформаційну базу";
-            // 
-            // вибірПапкиДляГенераціїВідомостейToolStripMenuItem
-            // 
-            this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Name = "вибірПапкиДляГенераціїВідомостейToolStripMenuItem";
-            this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
-            this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Text = "Вибір папки для генерації відомостей";
-            // 
-            // змінитиНазвуУніверситетуToolStripMenuItem
-            // 
-            this.змінитиНазвуУніверситетуToolStripMenuItem.Name = "змінитиНазвуУніверситетуToolStripMenuItem";
-            this.змінитиНазвуУніверситетуToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
-            this.змінитиНазвуУніверситетуToolStripMenuItem.Text = "Змінити назву університету";
-            // 
-            // змінитиНазвуІнститутуToolStripMenuItem
-            // 
-            this.змінитиНазвуІнститутуToolStripMenuItem.Name = "змінитиНазвуІнститутуToolStripMenuItem";
-            this.змінитиНазвуІнститутуToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
-            this.змінитиНазвуІнститутуToolStripMenuItem.Text = "Змінити назву інституту";
-            // 
-            // вихідІзПрограмиToolStripMenuItem
-            // 
-            this.вихідІзПрограмиToolStripMenuItem.Name = "вихідІзПрограмиToolStripMenuItem";
-            this.вихідІзПрограмиToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
-            this.вихідІзПрограмиToolStripMenuItem.Text = "Вихід із програми";
-            // 
             // інформаціяПроКористуванняПрограмоюToolStripMenuItem
             // 
             this.інформаціяПроКористуванняПрограмоюToolStripMenuItem.Name = "інформаціяПроКористуванняПрограмоюToolStripMenuItem";
             this.інформаціяПроКористуванняПрограмоюToolStripMenuItem.Size = new System.Drawing.Size(309, 22);
             this.інформаціяПроКористуванняПрограмоюToolStripMenuItem.Text = "Інформація про користування програмою";
+            this.інформаціяПроКористуванняПрограмоюToolStripMenuItem.Click += new System.EventHandler(this.інформаціяПроКористуванняПрограмоюToolStripMenuItem_Click);
             // 
             // проПрограмуToolStripMenuItem
             // 
             this.проПрограмуToolStripMenuItem.Name = "проПрограмуToolStripMenuItem";
             this.проПрограмуToolStripMenuItem.Size = new System.Drawing.Size(309, 22);
             this.проПрограмуToolStripMenuItem.Text = "Про програму";
+            this.проПрограмуToolStripMenuItem.Click += new System.EventHandler(this.проПрограмуToolStripMenuItem_Click);
             // 
             // label3
             // 
@@ -200,6 +189,7 @@
             this.btnCreateBase.TabIndex = 10;
             this.btnCreateBase.Text = "Створити інформаційну базу";
             this.btnCreateBase.UseVisualStyleBackColor = true;
+            this.btnCreateBase.Click += new System.EventHandler(this.btnCreateBase_Click);
             // 
             // btnOpenBase
             // 
@@ -209,15 +199,17 @@
             this.btnOpenBase.TabIndex = 11;
             this.btnOpenBase.Text = "Відкрити існуючу інформаційну базу";
             this.btnOpenBase.UseVisualStyleBackColor = true;
+            this.btnOpenBase.Click += new System.EventHandler(this.btnOpenBase_Click);
             // 
-            // button3
+            // btnSelectOutputDir
             // 
-            this.button3.Location = new System.Drawing.Point(12, 215);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(140, 41);
-            this.button3.TabIndex = 12;
-            this.button3.Text = "Вибір папки для генерації відомостей";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnSelectOutputDir.Location = new System.Drawing.Point(12, 215);
+            this.btnSelectOutputDir.Name = "btnSelectOutputDir";
+            this.btnSelectOutputDir.Size = new System.Drawing.Size(140, 41);
+            this.btnSelectOutputDir.TabIndex = 12;
+            this.btnSelectOutputDir.Text = "Вибір папки для генерації відомостей";
+            this.btnSelectOutputDir.UseVisualStyleBackColor = true;
+            this.btnSelectOutputDir.Click += new System.EventHandler(this.btnSelectOutputDir_Click);
             // 
             // pictureBox1
             // 
@@ -235,7 +227,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 356);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnSelectOutputDir);
             this.Controls.Add(this.btnOpenBase);
             this.Controls.Add(this.btnCreateBase);
             this.Controls.Add(this.label3);
@@ -272,15 +264,13 @@
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem створитиІнформаційнуБазуToolStripMenuItem;
         private ToolStripMenuItem вибірПапкиДляГенераціїВідомостейToolStripMenuItem;
-        private ToolStripMenuItem змінитиНазвуУніверситетуToolStripMenuItem;
-        private ToolStripMenuItem змінитиНазвуІнститутуToolStripMenuItem;
         private ToolStripMenuItem вихідІзПрограмиToolStripMenuItem;
         private ToolStripMenuItem інформаціяПроКористуванняПрограмоюToolStripMenuItem;
         private ToolStripMenuItem проПрограмуToolStripMenuItem;
         private Label label3;
         private Button btnCreateBase;
         private Button btnOpenBase;
-        private Button button3;
+        private Button btnSelectOutputDir;
         private PictureBox pictureBox1;
     }
 }

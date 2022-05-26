@@ -7,10 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="About.html" />
+    <None Remove="data.xlsx" />
+    <None Remove="Info.html" />
     <None Remove="template.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="About.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Info.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="template.xlsx" />
   </ItemGroup>
 
