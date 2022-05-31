@@ -33,14 +33,11 @@
             this.ofdDataSource = new System.Windows.Forms.OpenFileDialog();
             this.btnStart = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.ListBox();
-            this.txtUniversity = new System.Windows.Forms.TextBox();
-            this.txtInstitute = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.створитиІнформаційнуБазуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.відновитиШаблонВідомостіToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.вихідІзПрограмиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.інформаціяПроКористуванняПрограмоюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +47,7 @@
             this.btnOpenBase = new System.Windows.Forms.Button();
             this.btnSelectOutputDir = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.btnTemplate = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -70,42 +68,10 @@
             this.txtOutput.FormattingEnabled = true;
             this.txtOutput.HorizontalScrollbar = true;
             this.txtOutput.ItemHeight = 15;
-            this.txtOutput.Location = new System.Drawing.Point(158, 121);
+            this.txtOutput.Location = new System.Drawing.Point(158, 64);
             this.txtOutput.Name = "txtOutput";
-            this.txtOutput.Size = new System.Drawing.Size(407, 214);
+            this.txtOutput.Size = new System.Drawing.Size(407, 229);
             this.txtOutput.TabIndex = 3;
-            // 
-            // txtUniversity
-            // 
-            this.txtUniversity.Location = new System.Drawing.Point(158, 92);
-            this.txtUniversity.Name = "txtUniversity";
-            this.txtUniversity.Size = new System.Drawing.Size(407, 23);
-            this.txtUniversity.TabIndex = 4;
-            // 
-            // txtInstitute
-            // 
-            this.txtInstitute.Location = new System.Drawing.Point(158, 61);
-            this.txtInstitute.Name = "txtInstitute";
-            this.txtInstitute.Size = new System.Drawing.Size(407, 23);
-            this.txtInstitute.TabIndex = 5;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 64);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 15);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Назва університету:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 95);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 15);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Назва інституту:";
             // 
             // menuStrip1
             // 
@@ -123,6 +89,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.створитиІнформаційнуБазуToolStripMenuItem,
             this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem,
+            this.відновитиШаблонВідомостіToolStripMenuItem,
             this.вихідІзПрограмиToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
@@ -142,11 +109,19 @@
             this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Text = "Вибір папки для генерації відомостей";
             this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem.Click += new System.EventHandler(this.вибірПапкиДляГенераціїВідомостейToolStripMenuItem_Click);
             // 
+            // відновитиШаблонВідомостіToolStripMenuItem
+            // 
+            this.відновитиШаблонВідомостіToolStripMenuItem.Name = "відновитиШаблонВідомостіToolStripMenuItem";
+            this.відновитиШаблонВідомостіToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.відновитиШаблонВідомостіToolStripMenuItem.Text = "Відновити шаблон відомості";
+            this.відновитиШаблонВідомостіToolStripMenuItem.Click += new System.EventHandler(this.відновитиШаблонВідомостіToolStripMenuItem_Click);
+            // 
             // вихідІзПрограмиToolStripMenuItem
             // 
             this.вихідІзПрограмиToolStripMenuItem.Name = "вихідІзПрограмиToolStripMenuItem";
             this.вихідІзПрограмиToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.вихідІзПрограмиToolStripMenuItem.Text = "Вихід із програми";
+            this.вихідІзПрограмиToolStripMenuItem.Click += new System.EventHandler(this.вихідІзПрограмиToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -183,7 +158,7 @@
             // 
             // btnCreateBase
             // 
-            this.btnCreateBase.Location = new System.Drawing.Point(12, 121);
+            this.btnCreateBase.Location = new System.Drawing.Point(12, 64);
             this.btnCreateBase.Name = "btnCreateBase";
             this.btnCreateBase.Size = new System.Drawing.Size(140, 40);
             this.btnCreateBase.TabIndex = 10;
@@ -193,7 +168,7 @@
             // 
             // btnOpenBase
             // 
-            this.btnOpenBase.Location = new System.Drawing.Point(12, 167);
+            this.btnOpenBase.Location = new System.Drawing.Point(12, 110);
             this.btnOpenBase.Name = "btnOpenBase";
             this.btnOpenBase.Size = new System.Drawing.Size(140, 42);
             this.btnOpenBase.TabIndex = 11;
@@ -203,7 +178,7 @@
             // 
             // btnSelectOutputDir
             // 
-            this.btnSelectOutputDir.Location = new System.Drawing.Point(12, 215);
+            this.btnSelectOutputDir.Location = new System.Drawing.Point(12, 158);
             this.btnSelectOutputDir.Name = "btnSelectOutputDir";
             this.btnSelectOutputDir.Size = new System.Drawing.Size(140, 41);
             this.btnSelectOutputDir.TabIndex = 12;
@@ -221,25 +196,35 @@
             this.pictureBox1.TabIndex = 13;
             this.pictureBox1.TabStop = false;
             // 
+            // btnTemplate
+            // 
+            this.btnTemplate.Location = new System.Drawing.Point(12, 205);
+            this.btnTemplate.Name = "btnTemplate";
+            this.btnTemplate.Size = new System.Drawing.Size(140, 41);
+            this.btnTemplate.TabIndex = 14;
+            this.btnTemplate.Text = "Шаблон відомості";
+            this.btnTemplate.UseVisualStyleBackColor = true;
+            this.btnTemplate.Click += new System.EventHandler(this.btnTemplate_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 356);
+            this.Controls.Add(this.btnTemplate);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnSelectOutputDir);
             this.Controls.Add(this.btnOpenBase);
             this.Controls.Add(this.btnCreateBase);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtInstitute);
-            this.Controls.Add(this.txtUniversity);
             this.Controls.Add(this.txtOutput);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "MainWindow";
             this.Text = "Генератор відомостей (Додаток 3)";
             this.menuStrip1.ResumeLayout(false);
@@ -255,10 +240,6 @@
         private OpenFileDialog ofdDataSource;
         private Button btnStart;
         private ListBox txtOutput;
-        private TextBox txtUniversity;
-        private TextBox txtInstitute;
-        private Label label1;
-        private Label label2;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem helpToolStripMenuItem;
@@ -272,5 +253,7 @@
         private Button btnOpenBase;
         private Button btnSelectOutputDir;
         private PictureBox pictureBox1;
+        private Button btnTemplate;
+        private ToolStripMenuItem відновитиШаблонВідомостіToolStripMenuItem;
     }
 }

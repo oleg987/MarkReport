@@ -7,27 +7,41 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="About.html" />
+    <None Remove="baseTemplate.xlsx" />
     <None Remove="data.xlsx" />
-    <None Remove="Info.html" />
+    <None Remove="restore.xlsx" />
     <None Remove="template.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="About.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <EmbeddedResource Include="baseTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="data.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="template.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Info.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="template.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="6.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="restore.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="About.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Info.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -10,8 +10,6 @@ namespace Core.Domain
     {
         private readonly List<Student> _students;
 
-        public string UniversityName { get; } = null!;
-        public string InstituteName { get; } = null!;
         public string StudyProgramName { get; } = null!;
         public string Speciality { get; } = null!;
         public string Department { get; } = null!;
@@ -23,11 +21,9 @@ namespace Core.Domain
         public Subject Subject { get; } = null!;
         public IReadOnlyList<Student> Students { get => _students.AsReadOnly(); }
 
-        public MarkReport(IEnumerable<Student> students, string universityName, string instituteName, string studyProgramName, string speciality, string department, uint year, uint semester, uint course, string group, uint markReportYear, Subject subject)
+        public MarkReport(IEnumerable<Student> students, string studyProgramName, string speciality, string department, uint year, uint semester, uint course, string group, uint markReportYear, Subject subject)
         {
-            _students = students.ToList();
-            UniversityName = !string.IsNullOrWhiteSpace(universityName) ? universityName.Trim() : throw new ArgumentException("University title is empty!");
-            InstituteName = !string.IsNullOrWhiteSpace(instituteName) ? instituteName.Trim() : throw new ArgumentException("Institute title is empty!");
+            _students = students.ToList();           
             StudyProgramName = !string.IsNullOrWhiteSpace(studyProgramName) ? studyProgramName.Trim() : throw new ArgumentException("Study Program title is empty!");
             Speciality = !string.IsNullOrWhiteSpace(speciality) ? speciality.Trim() : throw new ArgumentException("Speciality title is empty!");
             Department = !string.IsNullOrWhiteSpace(department) ? department.Trim() : throw new ArgumentException("Department title is empty!");

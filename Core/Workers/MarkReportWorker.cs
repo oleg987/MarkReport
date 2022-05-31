@@ -14,18 +14,14 @@ namespace Core.Workers
     public class MarkReportWorker
     {
         private readonly IEnumerable<StudyProgram> _studyPrograms;
-        private readonly string _universityName = "ОДЕСЬКИЙ НАЦІОНАЛЬНИЙ ПОЛІТЕХНІЧНИЙ УНІВЕРСИТЕТ";
-        private readonly string _instituteName = "ІНСТИТУТ КОМП'ЮТЕРНИХ СИСТЕМ";
         private readonly string _reportDestinationPath;
 
         public event EventHandler<OnErrorEventArgs> OnError;
 
-        public MarkReportWorker(IEnumerable<StudyProgram> studyPrograms, string destinationPath, string universityName, string instituteName)
+        public MarkReportWorker(IEnumerable<StudyProgram> studyPrograms, string destinationPath)
         {
             _studyPrograms = studyPrograms;
             _reportDestinationPath = destinationPath;
-            _universityName = universityName;
-            _instituteName = instituteName;
         }
 
         public async Task CreateMarkReportsAsync()
@@ -41,11 +37,7 @@ namespace Core.Workers
 
             // Создать файлы Excel с ведомостями.
 
-            Assembly asm = Assembly.GetExecutingAssembly();
-
-            using var templateStream = asm.GetManifestResourceStream("Core.template.xlsx");
-
-            using var template = new ExcelPackage(templateStream);
+            using var template = new ExcelPackage("template.xlsx");
 
             foreach (var markReport in markReports)
             {
@@ -73,8 +65,6 @@ namespace Core.Workers
                         {
                             var markReport = new MarkReport(
                             group.Students,
-                            _universityName,
-                            _instituteName,
                             studyProgram.Title,
                             studyProgram.Speciality,
                             studyProgram.Department,
@@ -189,8 +179,6 @@ namespace Core.Workers
         {
             var worksheet = reportFile.Workbook.Worksheets.Add($"{markReport.Group}", template.Workbook.Worksheets[0]);
 
-            worksheet.Cells["A2"].Value = markReport.UniversityName;
-            worksheet.Cells["A3"].Value = markReport.InstituteName;
             worksheet.Cells["C4"].Value = markReport.Speciality;
             worksheet.Cells["C5"].Value = markReport.StudyProgramName;
             worksheet.Cells["C6"].Value = markReport.Year;

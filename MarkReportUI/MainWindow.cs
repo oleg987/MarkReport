@@ -13,24 +13,17 @@ namespace MarkReportUI
         private bool _outputDirSet = false;
         private string _dataSourcePath;
         private bool _dataSourcePathSet = false;
-        private string _universityName = "ÎÄÅÑÜÊÈÉ ÍÀÖ²ÎÍÀËÜÍÈÉ ÏÎË²ÒÅÕÍ²×ÍÈÉ ÓÍ²ÂÅĞÑÈÒÅÒ";
-        private string _instituteName = "²ÍÑÒÈÒÓÒ ÊÎÌÏ'ŞÒÅĞÍÈÕ ÑÈÑÒÅÌ";
 
         public MainWindow()
         {
             InitializeComponent();
             ofdDataSource.Filter = "Excel files(*.xlsx) | *.xlsx";
             btnStart.Enabled = false;
-            txtUniversity.Text = _universityName;
-            txtInstitute.Text = _instituteName;
         }
 
         private async void btnStart_Click(object sender, EventArgs e)
         {
             btnStart.Enabled = false;
-
-            _universityName = txtUniversity.Text;
-            _instituteName = txtInstitute.Text;
 
             if (string.IsNullOrWhiteSpace(_outputDir) || string.IsNullOrWhiteSpace(_dataSourcePath))
             {
@@ -73,7 +66,7 @@ namespace MarkReportUI
 
             try
             {
-                worker = new MarkReportWorker(studyPrograms, _outputDir, _universityName, _instituteName);
+                worker = new MarkReportWorker(studyPrograms, _outputDir);
 
                 worker.OnError += PrintError;
 
@@ -177,12 +170,51 @@ namespace MarkReportUI
 
         private void ³íôîğìàö³ÿÏğîÊîğèñòóâàííÿÏğîãğàìîşToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = "Info.html",
+                UseShellExecute = true
+            };
+            Process.Start(processInfo);
         }
 
         private void ïğîÏğîãğàìóToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = "About.html",
+                UseShellExecute = true
+            };
+            Process.Start(processInfo);
+        }
 
+        private void âèõ³ä²çÏğîãğàìèToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnTemplate_Click(object sender, EventArgs e)
+        {
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = "template.xlsx",
+                UseShellExecute = true
+            };
+            Process.Start(processInfo);
+        }
+
+        private void â³äíîâèòèØàáëîíÂ³äîìîñò³ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var generator = new TemplateFileGenerator();
+
+            generator.Generate();
+
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = "template.xlsx",
+                UseShellExecute = true
+            };
+            Process.Start(processInfo);
         }
     }
 }
