@@ -24,13 +24,13 @@ namespace Core.Domain
         public MarkReport(IEnumerable<Student> students, string studyProgramName, string speciality, string department, uint year, uint semester, uint course, string group, uint markReportYear, Subject subject)
         {
             _students = students.ToList();           
-            StudyProgramName = !string.IsNullOrWhiteSpace(studyProgramName) ? studyProgramName.Trim() : throw new ArgumentException("Study Program title is empty!");
-            Speciality = !string.IsNullOrWhiteSpace(speciality) ? speciality.Trim() : throw new ArgumentException("Speciality title is empty!");
-            Department = !string.IsNullOrWhiteSpace(department) ? department.Trim() : throw new ArgumentException("Department title is empty!");
+            StudyProgramName = !string.IsNullOrWhiteSpace(studyProgramName) ? studyProgramName.Trim() : throw new ArgumentException("Назва освітньої програми не заповнена");
+            Speciality = !string.IsNullOrWhiteSpace(speciality) ? speciality.Trim() : throw new ArgumentException("Назва спеціальності не заповнена");
+            Department = !string.IsNullOrWhiteSpace(department) ? department.Trim() : throw new ArgumentException("Назва кафедри не заповнена");
             Year = year;
             Semester = semester;
             Course = course;
-            Group = !string.IsNullOrWhiteSpace(group) ? group.Trim() : throw new ArgumentException("Group title is empty!");
+            Group = !string.IsNullOrWhiteSpace(group) ? group.Trim() : throw new ArgumentException("Назва групи не заповнена");
             MarkReportYear = markReportYear;
             Subject = subject;
         }

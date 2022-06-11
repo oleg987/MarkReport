@@ -16,7 +16,7 @@ namespace Core.Workers
         private readonly IEnumerable<StudyProgram> _studyPrograms;
         private readonly string _reportDestinationPath;
 
-        public event EventHandler<OnErrorEventArgs> OnError;
+        public event EventHandler<OnMessageEventArgs> OnMessage;
 
         public MarkReportWorker(IEnumerable<StudyProgram> studyPrograms, string destinationPath)
         {
@@ -31,7 +31,7 @@ namespace Core.Workers
 
             if (markReports.Count == 0)
             {
-                OnError?.Invoke(this, new OnErrorEventArgs($"Error: No study programs recieved;"));
+                OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Немає відомостей доступних для формування;"));
                 return;
             }
 
@@ -79,7 +79,7 @@ namespace Core.Workers
                         }
                         catch (Exception e)
                         {
-                            OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                            OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Помилка при формуванні відомості. {e.Message};"));
                         }
                     }
                 }
@@ -109,7 +109,7 @@ namespace Core.Workers
                 }
                 catch (Exception e)
                 {
-                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: {e.Message};"));
                     return;
                 }
             }
@@ -135,7 +135,7 @@ namespace Core.Workers
                 }
                 catch (Exception e)
                 {
-                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: {e.Message};"));
                     return null;
                 }
             }
@@ -150,7 +150,7 @@ namespace Core.Workers
                 }
                 catch (Exception e)
                 {
-                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: {e.Message};"));
                     return null;
                 }
             }
@@ -165,7 +165,7 @@ namespace Core.Workers
                 }
                 catch (Exception e)
                 {
-                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message};"));
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: {e.Message};"));
                     return null;
                 }
             }

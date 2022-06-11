@@ -13,8 +13,8 @@ namespace Core.Domain
 
         public Subject(string title, string controlType)
         {
-            Title = !string.IsNullOrWhiteSpace(title) ? title.Trim() : throw new ArgumentException("Subject title is empty!");
-            ControlType = !string.IsNullOrWhiteSpace(controlType) ? controlType.Trim() : throw new ArgumentException("Control type is empty!");
+            Title = !string.IsNullOrWhiteSpace(title) ? title.Trim() : throw new ArgumentException("Назва предмету не заповнена");
+            ControlType = !string.IsNullOrWhiteSpace(controlType) ? controlType.Trim() : throw new ArgumentException("Назва форми контролю не заповнена");
         }
     }
 }

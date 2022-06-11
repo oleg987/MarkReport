@@ -24,6 +24,7 @@ namespace MarkReportUI
         private async void btnStart_Click(object sender, EventArgs e)
         {
             btnStart.Enabled = false;
+            txtOutput.Items.Clear();
 
             if (string.IsNullOrWhiteSpace(_outputDir) || string.IsNullOrWhiteSpace(_dataSourcePath))
             {
@@ -39,7 +40,7 @@ namespace MarkReportUI
             {
                 parser = new StudyProgramParserFromExcel(_dataSourcePath);
 
-                parser.OnError += PrintError;
+                parser.OnMessage += PrintMessage;
 
                 studyPrograms = parser.Parse();
             }
@@ -52,7 +53,7 @@ namespace MarkReportUI
             {
                 if (parser is not null)
                 {
-                    parser.OnError -= PrintError;
+                    parser.OnMessage -= PrintMessage;
                 }
             }
 
@@ -62,13 +63,13 @@ namespace MarkReportUI
                 return;
             }
 
-            MarkReportWorker worker = null;            
+            MarkReportWorker worker = null;
 
             try
             {
                 worker = new MarkReportWorker(studyPrograms, _outputDir);
 
-                worker.OnError += PrintError;
+                worker.OnMessage += PrintMessage;
 
                 await worker.CreateMarkReportsAsync();
             }
@@ -81,7 +82,7 @@ namespace MarkReportUI
             {
                 if (worker is not null)
                 {
-                    worker.OnError -= PrintError;
+                    worker.OnMessage -= PrintMessage;
                 }
             }
 
@@ -109,7 +110,7 @@ namespace MarkReportUI
         private void btnCreateBase_Click(object sender, EventArgs e)
         {
             GenerateDataFile();
-        }        
+        }
 
         private void створитиІнформаційнуБазуToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -140,7 +141,8 @@ namespace MarkReportUI
                     UseShellExecute = true
                 };
                 Process.Start(processInfo);
-                txtOutput.Items.Add($"Created data file in {filePath}");
+
+                PrintMessage(null, new OnMessageEventArgs($"Створено файл інформаційної бази в директорії: {filePath}"));                
             }
             CanStart();
         }
@@ -163,9 +165,17 @@ namespace MarkReportUI
             }
         }
 
-        private void PrintError(object? sender, OnErrorEventArgs e)
+        private void PrintMessage(object? sender, OnMessageEventArgs e)
         {
-            txtOutput.Items.Add(e.Message);
+            if (e is not null && string.IsNullOrWhiteSpace(e.Message))
+            {
+                int messageLength = e.Message.Length;
+                for (int i = 0; i < e.Message.Length; i += 45)
+                {
+                    messageLength -= 45;
+                    txtOutput.Items.Add(messageLength > 0 ? e.Message.Substring(i, 45) : e.Message.Substring(i));
+                }
+            }
         }
 
         private void інформаціяПроКористуванняПрограмоюToolStripMenuItem_Click(object sender, EventArgs e)

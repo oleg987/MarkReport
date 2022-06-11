@@ -13,11 +13,11 @@ namespace Core.Parsers
     {
         private readonly string _pathToDataFile;
 
-        public event EventHandler<OnErrorEventArgs> OnError;
+        public event EventHandler<OnMessageEventArgs> OnMessage;
 
         public StudyProgramParserFromExcel(string pathToDataFile)
         {
-            _pathToDataFile = !string.IsNullOrWhiteSpace(pathToDataFile) ? pathToDataFile : throw new ArgumentException("Path to data file is empty!");
+            _pathToDataFile = !string.IsNullOrWhiteSpace(pathToDataFile) ? pathToDataFile : throw new ArgumentException("Помилка: Не вказано шлях до файлу інформаційної бази.");
         }
 
         public IEnumerable<StudyProgram> Parse()
@@ -40,7 +40,7 @@ namespace Core.Parsers
                 }
                 catch (Exception e)
                 {
-                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message}; List: \"students\"; Row: {groupDataBeginRow};"));
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: {e.Message}; Лист: \"students\"; Рядок №: {groupDataBeginRow};"));
                 }
                 
                 groupDataBeginRow++;
@@ -61,13 +61,103 @@ namespace Core.Parsers
 
             while (studyProgramWorksheet.Cells["A" + studyProgramDataBeginRow].Value is not null)
             {
-                string studyProgramName = studyProgramWorksheet.Cells["A" + studyProgramDataBeginRow].Value.ToString();
-                string speciality = studyProgramWorksheet.Cells["B" + studyProgramDataBeginRow].Value.ToString();
-                string department = studyProgramWorksheet.Cells["C" + studyProgramDataBeginRow].Value.ToString();
-                uint year = Convert.ToUInt32(studyProgramWorksheet.Cells["D" + studyProgramDataBeginRow].Value.ToString());
-                uint semester = Convert.ToUInt32(studyProgramWorksheet.Cells["E" + studyProgramDataBeginRow].Value.ToString());
-                uint course = Convert.ToUInt32(studyProgramWorksheet.Cells["F" + studyProgramDataBeginRow].Value.ToString());
-                string[] groupNames = studyProgramWorksheet.Cells["G" + studyProgramDataBeginRow].Value.ToString().Split(',');
+                string studyProgramName = null;
+
+                try
+                {
+                    studyProgramName = studyProgramWorksheet.Cells["A" + studyProgramDataBeginRow].Value.ToString();
+                }
+                catch (Exception)
+                {
+
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказана назва освітньої програми; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                    studyProgramDataBeginRow++;
+                    continue;
+                }
+
+                string speciality = null;
+
+                try
+                {
+                    speciality = studyProgramWorksheet.Cells["B" + studyProgramDataBeginRow].Value.ToString();
+                }
+                catch (Exception)
+                {
+
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказана назва спеціальності; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                    studyProgramDataBeginRow++;
+                    continue;
+                }
+
+                string department = null;
+
+                try
+                {
+                    department = studyProgramWorksheet.Cells["C" + studyProgramDataBeginRow].Value.ToString();
+                }
+                catch (Exception)
+                {
+
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказана назва кафедри; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                    studyProgramDataBeginRow++;
+                    continue;
+                }
+
+                uint year = 0;
+
+                try
+                {
+                    year = Convert.ToUInt32(studyProgramWorksheet.Cells["D" + studyProgramDataBeginRow].Value.ToString());
+                }
+                catch (Exception)
+                {
+
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказан рік освітньої програми; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                    studyProgramDataBeginRow++;
+                    continue;
+                }
+
+                uint semester = 0;
+
+                try
+                {
+                    semester = Convert.ToUInt32(studyProgramWorksheet.Cells["E" + studyProgramDataBeginRow].Value.ToString());
+                }
+                catch (Exception)
+                {
+
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказан семестр освітньої програми; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                    studyProgramDataBeginRow++;
+                    continue;
+                }
+
+                uint course = 0;
+
+                try
+                {
+                    course = Convert.ToUInt32(studyProgramWorksheet.Cells["F" + studyProgramDataBeginRow].Value.ToString());
+                }
+                catch (Exception)
+                {
+
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказан курс освітньої програми; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                    studyProgramDataBeginRow++;
+                    continue;
+                }
+
+                string[] groupNames = null;
+
+                try
+                {
+                    groupNames = studyProgramWorksheet.Cells["G" + studyProgramDataBeginRow].Value.ToString().Split(',');
+                }
+                catch (Exception)
+                {
+
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказані групи освітньої програми; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                    studyProgramDataBeginRow++;
+                    continue;
+                }
 
                 for (int i = 0; i < groupNames.Length; i++)
                 {
@@ -80,16 +170,45 @@ namespace Core.Parsers
 
                 while (studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn].Value is not null || studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn + 1].Value is not null)
                 {
+                    string subjectTitle = null;
+
                     try
                     {
-                        var subjectTitle = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn].Value.ToString();
-                        var subjectControl = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn + 1].Value.ToString();
+                        subjectTitle = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn].Value.ToString();
+                    }
+                    catch (Exception)
+                    {
+
+                        OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказана назва {currentSubjectColumn - 7}-го предмету; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                        currentSubjectColumn += 2;
+                        continue;
+                    }
+
+                    string subjectControl = null;
+
+                    try
+                    {
+                        subjectControl = studyProgramWorksheet.Cells[studyProgramDataBeginRow, currentSubjectColumn + 1].Value.ToString();
+                    }
+                    catch (Exception)
+                    {
+
+                        OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: Не вказана форма контролю {currentSubjectColumn - 7}-го предмету; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                        currentSubjectColumn += 2;
+                        continue;
+                    }
+
+                    try
+                    {
                         var subject = new Subject(subjectTitle, subjectControl);
                         subjects.Add(subject);
                     }
                     catch (Exception e)
                     {
-                        OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message}; List: \"study_program\"; Row: {studyProgramDataBeginRow};"));
+
+                        OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: При створенні {currentSubjectColumn - 7}-го предмету - {e.Message}; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
+                        currentSubjectColumn += 2;
+                        continue;
                     }                    
 
                     currentSubjectColumn += 2;
@@ -104,7 +223,7 @@ namespace Core.Parsers
                 }
                 catch (Exception e)
                 {
-                    OnError?.Invoke(this, new OnErrorEventArgs($"Error: {e.Message}; List: \"study_program\"; Row: {studyProgramDataBeginRow};"));
+                    OnMessage?.Invoke(this, new OnMessageEventArgs($"Помилка: При створенні освітньої програми - {e.Message}; Лист: \"study_program\"; Рядок №: {studyProgramDataBeginRow};"));
                 }                
 
                 studyProgramDataBeginRow++;

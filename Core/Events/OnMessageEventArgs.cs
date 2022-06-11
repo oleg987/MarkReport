@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Core.Events
 {
-    public class OnErrorEventArgs : EventArgs
+    public class OnMessageEventArgs : EventArgs
     {
         public string Message { get; }
 
-        public OnErrorEventArgs(string message)
+        public OnMessageEventArgs(string message)
         {
             Message = message;
         }
